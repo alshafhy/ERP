@@ -1,0 +1,22 @@
+services:
+  account-backend:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    image: account/php-8.3
+    container_name: account-app
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "8080:80"
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+    networks:
+      - account-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+networks:
+  account-network:
+    driver: bridge
