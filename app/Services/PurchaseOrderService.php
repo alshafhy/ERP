@@ -38,7 +38,7 @@ class PurchaseOrderService
             $total = $subtotal + $tax;
 
             $purchaseOrder = PurchaseOrder::create([
-                'po_number' => 'PO-' . strtoupper(Str::random(8)),
+                'po_number' => 'PO-' . date('Ymd') . '-' . str_pad(PurchaseOrder::count() + 1, 3, '0', STR_PAD_LEFT),
                 'supplier_id' => $data['supplier_id'],
                 'status' => 'draft',
                 'subtotal' => $subtotal,
@@ -64,19 +64,11 @@ class PurchaseOrderService
     public function updateStatus(PurchaseOrder $purchaseOrder, string $status)
     {
         return DB::transaction(function () use ($purchaseOrder, $status) {
-            $oldStatus = $purchaseOrder->status;
-            $purchaseOrder->update(['status' => $status]);
-
-            if ($status === 'received' && $oldStatus !== 'received') {
-                $purchaseOrder->update(['received_at' => now()]);
-                
-                // Update product stock and supplier balance
-                foreach ($purchaseOrder->items as $item) {
-                    $item->product->increment('stock_qty', $item->qty);
-                }
-                
-                $purchaseOrder->supplier->increment('balance', $purchaseOrder->total);
+            if ($status === 'received') {
+                throw new \Exception('Use ReceivePurchaseOrderAction for receiving orders.');
             }
+            
+            $purchaseOrder->update(['status' => $status]);
 
             return $purchaseOrder;
         });

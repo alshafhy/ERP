@@ -49,10 +49,10 @@
                     {{ $entry->description }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold">
-                    {{ $entry->debit_account === 'Inventory' ? 'المخزون' : ($entry->debit_account === 'Accounts Payable' ? 'الذمم الدائنة' : $entry->debit_account) }}
+                    {{ $entry->debit_account }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold">
-                    {{ $entry->credit_account === 'Inventory' ? 'المخزون' : ($entry->credit_account === 'Accounts Payable' ? 'الذمم الدائنة' : $entry->credit_account) }}
+                    {{ $entry->credit_account }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-black text-indigo-700">
                     {{ number_format($entry->amount, 2) }} ر.س

@@ -31,22 +31,37 @@
     <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
             <tr>
-                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">المنتج</th>
                 <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">الرمز (SKU)</th>
-                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">المخزون</th>
-                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">السعر</th>
+                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">المنتج</th>
+                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">الفئة</th>
+                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">الوحدة</th>
+                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">سعر التكلفة</th>
+                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">سعر البيع</th>
+                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">الكمية</th>
+                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">الحد الأدنى</th>
                 <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">الإجراءات</th>
             </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
             @foreach($products as $product)
             <tr class="hover:bg-gray-50 transition-colors duration-200 {{ $loop->even ? 'bg-gray-50/50' : '' }}">
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm font-bold text-gray-900">{{ $product->name }}</div>
-                    <div class="text-xs text-gray-500">{{ $product->category }}</div>
-                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-bold">
                     {{ $product->sku }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-bold text-gray-900">{{ $product->name }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ $product->category }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ $product->unit }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold">
+                    {{ number_format($product->cost_price, 2) }} ر.س
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold">
+                    {{ number_format($product->sell_price, 2) }} ر.س
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                     @php
@@ -61,16 +76,15 @@
                     @endphp
                     <div class="flex items-center">
                         <span class="px-2 inline-flex text-xs leading-5 font-bold rounded-full {{ $stockStatus }}">
-                            {{ number_format($product->stock_qty, 2) }} {{ $product->unit }}
+                            {{ number_format($product->stock_qty, 2) }}
                         </span>
                         @if($lowStock)
                             <span class="mr-2 text-red-600 text-[10px] font-bold uppercase animate-pulse">نقص مخزون</span>
                         @endif
                     </div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-xs text-gray-900 font-bold"><span class="text-gray-500">البيع:</span> {{ number_format($product->sell_price, 2) }} ر.س</div>
-                    <div class="text-xs text-gray-500"><span class="text-gray-400">التكلفة:</span> {{ number_format($product->cost_price, 2) }} ر.س</div>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-bold">
+                    {{ number_format($product->min_stock, 2) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <a href="{{ route('products.edit', $product) }}" class="text-indigo-600 hover:text-indigo-900 ml-4">

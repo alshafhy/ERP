@@ -59,7 +59,7 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     @if($movement->reference_type)
-                        {{ $movement->reference_type === 'App\Models\PurchaseOrder' ? 'أمر شراء' : class_basename($movement->reference_type) }} #{{ $movement->reference_id }}
+                        {{ $movement->reference_type === 'purchase_order' ? 'أمر شراء' : (str_contains($movement->reference_type, '\\') ? class_basename($movement->reference_type) : $movement->reference_type) }} #{{ $movement->reference_id }}
                     @else
                         لا يوجد
                     @endif

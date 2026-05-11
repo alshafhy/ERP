@@ -11,24 +11,24 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            'Electronics' => ['Laptop Pro', 'Wireless Mouse', 'HD Monitor', 'Mechanical Keyboard', 'USB-C Dock', 'Webcam 4K', 'Noise Canceling Headphones', 'Smart Watch'],
-            'Raw Materials' => ['Steel Sheet 2mm', 'Aluminum Rod', 'Copper Wire 100m', 'Plastic Pellets (HDPE)', 'Glass Panel 4x4', 'Wood Plank (Oak)', 'Iron Bar', 'Textile Roll (Cotton)'],
-            'Office Supplies' => ['A4 Paper Box', 'Printer Ink Black', 'Gel Pens (12 Pack)', 'File Folder (Blue)', 'Stapler Heavy Duty', 'Sticky Notes Pack', 'Notebook Large', 'Whiteboard Marker'],
-            'Accessories' => ['Laptop Sleeve', 'Desk Mat Large', 'Phone Stand', 'Monitor Stand', 'Cables Organizer', 'Mouse Pad', 'Headset Stand', 'Ergonomic Footrest'],
-            'Packaging Materials' => ['Cardboard Box Med', 'Bubble Wrap Roll', 'Stretch Film', 'Packing Tape 50m', 'Shipping Labels', 'Plastic Mailer', 'Padded Envelope', 'Wooden Pallet'],
+            'إلكترونيات' => ['لابتوب برو', 'ماوس لاسلكي', 'شاشة HD', 'لوحة مفاتيح ميكانيكية', 'قاعدة توصيل USB-C', 'كاميرا ويب 4K', 'سماعات عازلة للضوضاء', 'ساعة ذكية'],
+            'مواد خام' => ['صفيحة فولاذ 2مم', 'قضيب ألمنيوم', 'سلك نحاس 100م', 'حبيبات بلاستيك', 'لوح زجاج 4x4', 'خشب بلوط', 'قضيب حديد', 'لفة قماش قطن'],
+            'أدوات مكتبية' => ['صندوق ورق A4', 'حبر طابعة أسود', 'مجموعة أقلام جيل', 'ملف مستندات أزرق', 'دباسة شديدة التحمل', 'ملاحظات لاصقة', 'دفتر كبير', 'قلم سبورة'],
+            'إكسسوارات' => ['حقيبة لابتوب', 'بساط مكتب كبير', 'مسند هاتف', 'مسند شاشة', 'منظم كابلات', 'لوحة ماوس', 'مسند سماعة', 'مسند قدم مريح'],
+            'مواد تغليف' => ['صندوق كرتون متوسط', 'لفة فقاعات هوائية', 'فيلم تغليف', 'شريط لاصق 50م', 'ملصقات شحن', 'مغلف بلاستيكي', 'مغلف مبطن', 'طبلية خشبية'],
         ];
 
         foreach ($categories as $category => $items) {
             foreach ($items as $index => $name) {
                 Product::create([
-                    'sku' => strtoupper(substr($category, 0, 1)) . '-' . str_pad($index + 1, 4, '0', STR_PAD_LEFT) . '-' . strtoupper(Str::random(4)),
+                    'sku' => strtoupper(substr(Str::slug($category), 0, 1) ?: 'P') . '-' . str_pad($index + 1, 4, '0', STR_PAD_LEFT) . '-' . strtoupper(Str::random(4)),
                     'name' => $name,
                     'category' => $category,
                     'unit' => $this->getUnit($category),
                     'cost_price' => rand(10, 500) + (rand(0, 99) / 100),
                     'sell_price' => rand(600, 1500) + (rand(0, 99) / 100),
-                    'stock_qty' => rand(20, 500),
-                    'min_stock' => rand(5, 20),
+                    'stock_qty' => rand(0, 50),
+                    'min_stock' => rand(20, 30),
                 ]);
             }
         }
@@ -37,10 +37,10 @@ class ProductSeeder extends Seeder
     private function getUnit($category)
     {
         return match ($category) {
-            'Electronics', 'Accessories', 'Office Supplies' => 'pcs',
-            'Raw Materials' => 'kg',
-            'Packaging Materials' => 'roll',
-            default => 'unit',
+            'إلكترونيات', 'إكسسوارات', 'أدوات مكتبية' => 'قطعة',
+            'مواد خام' => 'كجم',
+            'مواد تغليف' => 'لفة',
+            default => 'وحدة',
         };
     }
 }

@@ -9,7 +9,7 @@ class JournalEntrySeeder extends Seeder
 {
     public function run(): void
     {
-        $accounts = ['Inventory', 'Accounts Payable', 'Cash', 'Purchases'];
+        $accounts = ['المخزون', 'الذمم الدائنة', 'النقدية', 'المشتريات'];
 
         for ($i = 1; $i <= 30; $i++) {
             $debitAccount = $accounts[rand(0, 3)];
@@ -24,7 +24,7 @@ class JournalEntrySeeder extends Seeder
                 'entry_number' => 'JE-' . date('Ymd') . '-' . str_pad($i, 4, '0', STR_PAD_LEFT),
                 'reference_type' => null,
                 'reference_id' => null,
-                'description' => 'Generic transaction ' . $i,
+                'description' => 'قيد محاسبي عام رقم ' . $i,
                 'debit_account' => $debitAccount,
                 'credit_account' => $creditAccount,
                 'amount' => rand(500, 5000) + (rand(0, 99) / 100),

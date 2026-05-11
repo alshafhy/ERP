@@ -32,7 +32,8 @@
         <thead class="bg-gray-50">
             <tr>
                 <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">اسم المورد</th>
-                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">الاتصال</th>
+                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">الهاتف</th>
+                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">البريد الإلكتروني</th>
                 <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">الرصيد</th>
                 <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">الإجراءات</th>
             </tr>
@@ -44,8 +45,10 @@
                     <div class="text-sm font-bold text-gray-900">{{ $supplier->name }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <div>{{ $supplier->email }}</div>
-                    <div class="text-xs">{{ $supplier->phone }}</div>
+                    {{ $supplier->phone }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ $supplier->email }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                     <span class="px-2 inline-flex text-xs leading-5 font-bold rounded-full {{ $supplier->balance > 0 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}">

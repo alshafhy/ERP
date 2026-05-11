@@ -34,21 +34,21 @@ class ReceivePurchaseOrderAction
                 InventoryMovement::create([
                     'product_id' => $product->id,
                     'type' => 'in',
-                    'reference_type' => PurchaseOrder::class,
+                    'reference_type' => 'purchase_order',
                     'reference_id' => $purchaseOrder->id,
                     'qty' => $item->qty,
                     'balance_after' => $product->stock_qty,
                 ]);
             }
 
-            // 3. Create one JournalEntry (Debit: Inventory / Credit: Accounts Payable)
+            // 3. Create one JournalEntry (Debit: المخزون / Credit: الذمم الدائنة)
             JournalEntry::create([
-                'entry_number' => 'JE-' . strtoupper(Str::random(8)),
-                'reference_type' => PurchaseOrder::class,
+                'entry_number' => 'JE-' . date('Ymd') . '-' . str_pad(JournalEntry::count() + 1, 4, '0', STR_PAD_LEFT),
+                'reference_type' => 'purchase_order',
                 'reference_id' => $purchaseOrder->id,
                 'description' => "استلام أمر شراء رقم {$purchaseOrder->po_number}",
-                'debit_account' => 'Inventory',
-                'credit_account' => 'Accounts Payable',
+                'debit_account' => 'المخزون',
+                'credit_account' => 'الذمم الدائنة',
                 'amount' => $purchaseOrder->total,
             ]);
 

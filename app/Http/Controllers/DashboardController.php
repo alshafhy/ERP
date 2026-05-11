@@ -16,7 +16,7 @@ class DashboardController extends Controller
         $totalSuppliers = Supplier::count();
         $totalProducts = Product::count();
         $inventoryValue = Product::select(DB::raw('SUM(stock_qty * cost_price) as value'))->value('value') ?? 0;
-        $pendingPOs = PurchaseOrder::where('status', '!=', 'received')->count();
+        $totalPOs = PurchaseOrder::count();
         $lowStockItems = Product::whereColumn('stock_qty', '<', 'min_stock')->count();
         $totalPayables = Supplier::sum('balance');
 
@@ -27,6 +27,7 @@ class DashboardController extends Controller
             DB::raw('SUM(total) as total'),
             DB::raw("DATE_FORMAT(created_at, '%Y-%m') as month")
         )
+        ->where('status', 'received') // Only received POs count as purchases? Or all? User said "Monthly Purchases". Usually means realized.
         ->groupBy('month')
         ->orderBy('month', 'asc')
         ->take(6)
@@ -48,7 +49,7 @@ class DashboardController extends Controller
             'totalSuppliers',
             'totalProducts',
             'inventoryValue',
-            'pendingPOs',
+            'totalPOs',
             'lowStockItems',
             'totalPayables',
             'recentPOs',

@@ -31,14 +31,14 @@
         </div>
     </div>
 
-    <!-- Pending POs -->
+    <!-- Total Purchase Orders -->
     <div class="flex items-center px-5 py-6 bg-white rounded-md shadow-sm border-r-4 border-purple-500 text-right">
         <div class="p-3 bg-purple-600 bg-opacity-10 rounded-full">
             <i class="fas fa-file-invoice-dollar text-purple-600 text-2xl"></i>
         </div>
         <div class="mx-5">
-            <h4 class="text-2xl font-bold text-gray-700">{{ number_format($pendingPOs) }}</h4>
-            <div class="text-gray-500 font-medium">أوامر الشراء المعلقة</div>
+            <h4 class="text-2xl font-bold text-gray-700">{{ number_format($totalPOs) }}</h4>
+            <div class="text-gray-500 font-medium">إجمالي أوامر الشراء</div>
         </div>
     </div>
 </div>
@@ -113,6 +113,7 @@
                         <th class="px-6 py-3 text-xs font-bold text-gray-500 uppercase">المورد</th>
                         <th class="px-6 py-3 text-xs font-bold text-gray-500 uppercase">الحالة</th>
                         <th class="px-6 py-3 text-xs font-bold text-gray-500 uppercase">الإجمالي</th>
+                        <th class="px-6 py-3 text-xs font-bold text-gray-500 uppercase">التاريخ</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -127,6 +128,7 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-700 font-bold">{{ number_format($po->total, 2) }} ر.س</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">{{ $po->created_at->format('Y-m-d') }}</td>
                     </tr>
                     @endforeach
                 </tbody>
