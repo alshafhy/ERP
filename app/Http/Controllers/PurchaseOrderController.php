@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StorePurchaseOrderRequest;
 use App\Models\PurchaseOrder;
 use App\Models\Supplier;
-use App\Models\Product;
+use App\Models\Vehicle;
 use App\Services\PurchaseOrderService;
 use App\Actions\ReceivePurchaseOrderAction;
 use Illuminate\Http\Request;
@@ -13,8 +12,8 @@ use Illuminate\Http\Request;
 class PurchaseOrderController extends Controller
 {
     public function __construct(
-        protected \App\Services\PurchaseOrderService $purchaseOrderService,
-        protected \App\Actions\ReceivePurchaseOrderAction $receivePurchaseOrderAction
+        protected PurchaseOrderService $purchaseOrderService,
+        protected ReceivePurchaseOrderAction $receivePurchaseOrderAction
     ) {}
 
     public function index(Request $request)
@@ -25,28 +24,29 @@ class PurchaseOrderController extends Controller
 
     public function create()
     {
-        $suppliers = \App\Models\Supplier::all();
-        $products = \App\Models\Product::all();
-        return view('purchase-orders.create', compact('suppliers', 'products'));
+        $suppliers = Supplier::all();
+        // Vehicles that are not purchased yet or are new
+        $vehicles = Vehicle::whereNotIn('id', PurchaseOrder::pluck('vehicle_id'))->get();
+        return view('purchase-orders.create', compact('suppliers', 'vehicles'));
     }
 
-    public function store(\App\Http\Requests\StorePurchaseOrderRequest $request)
+    public function store(Request $request)
     {
-        $this->purchaseOrderService->createPurchaseOrder($request->validated());
+        $validated = $request->validate([
+            'supplier_id' => 'required|exists:suppliers,id',
+            'vehicle_id' => 'required|exists:vehicles,id|unique:purchase_orders,vehicle_id',
+            'purchase_price' => 'required|numeric|min:0',
+            'purchased_at' => 'nullable|date',
+        ]);
+
+        $this->purchaseOrderService->createPurchaseOrder($validated);
         return redirect()->route('purchase-orders.index')->with('success', 'تم إنشاء أمر الشراء بنجاح.');
     }
 
     public function show(PurchaseOrder $purchaseOrder)
     {
-        $purchaseOrder->load(['supplier', 'items.product']);
+        $purchaseOrder->load(['supplier', 'vehicle']);
         return view('purchase-orders.show', compact('purchaseOrder'));
-    }
-
-    public function updateStatus(Request $request, PurchaseOrder $purchaseOrder)
-    {
-        $request->validate(['status' => 'required|in:draft,approved,received']);
-        $this->purchaseOrderService->updateStatus($purchaseOrder, $request->status);
-        return back()->with('success', 'تم تحديث الحالة بنجاح.');
     }
 
     public function receive(PurchaseOrder $purchaseOrder)

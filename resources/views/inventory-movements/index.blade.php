@@ -29,40 +29,52 @@
         <thead class="bg-gray-50">
             <tr>
                 <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">التاريخ</th>
-                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">المنتج</th>
-                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">النوع</th>
-                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">الكمية</th>
-                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">الرصيد بعد الحركة</th>
-                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">المرجع</th>
+                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">المركبة</th>
+                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">الحالة السابقة</th>
+                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">الحالة الجديدة</th>
+                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">بواسطة</th>
+                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">الملاحظات والبيان</th>
             </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
             @foreach($movements as $movement)
+            @php
+                $statusMap = [
+                    'available' => 'متاحة',
+                    'in_transit' => 'في الشحن',
+                    'reserved' => 'محجوزة',
+                    'sold' => 'مباعة',
+                ];
+                $statusFromAr = $statusMap[$movement->status_from] ?? $movement->status_from;
+                $statusToAr = $statusMap[$movement->status_to] ?? $movement->status_to;
+            @endphp
             <tr class="hover:bg-gray-50 transition-colors duration-200">
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {{ $movement->created_at->format('Y-m-d H:i') }}
+                    {{ $movement->changed_at ? $movement->changed_at->format('Y-m-d H:i') : ($movement->created_at ? $movement->created_at->format('Y-m-d H:i') : '-') }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm font-bold text-gray-900">{{ $movement->product->name }}</div>
-                    <div class="text-xs text-gray-500">رمز: {{ $movement->product->sku }}</div>
+                    @if($movement->vehicle)
+                        <div class="text-sm font-bold text-gray-900">{{ $movement->vehicle->make }} {{ $movement->vehicle->model }} ({{ $movement->vehicle->year }})</div>
+                        <div class="text-xs text-gray-500">رقم الهيكل: {{ $movement->vehicle->vin }}</div>
+                    @else
+                        <div class="text-sm text-gray-400">مركبة محذوفة</div>
+                    @endif
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="px-2 inline-flex text-xs leading-5 font-bold rounded-full {{ $movement->type === 'in' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                        {{ $movement->type === 'in' ? 'وارد' : 'صادر' }}
+                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    <span class="px-2 inline-flex text-xs leading-5 font-bold rounded-full bg-gray-100 text-gray-800">
+                        {{ $statusFromAr }}
                     </span>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm {{ $movement->type === 'in' ? 'text-green-600' : 'text-red-600' }} font-black">
-                    {{ $movement->type === 'in' ? '+' : '-' }}{{ $movement->qty }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-black">
-                    {{ $movement->balance_after }}
+                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    <span class="px-2 inline-flex text-xs leading-5 font-bold rounded-full {{ $movement->status_to === 'available' ? 'bg-green-100 text-green-800' : ($movement->status_to === 'sold' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800') }}">
+                        {{ $statusToAr }}
+                    </span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    @if($movement->reference_type)
-                        {{ $movement->reference_type === 'purchase_order' ? 'أمر شراء' : (str_contains($movement->reference_type, '\\') ? class_basename($movement->reference_type) : $movement->reference_type) }} #{{ $movement->reference_id }}
-                    @else
-                        لا يوجد
-                    @endif
+                    {{ $movement->user ? $movement->user->name : 'النظام' }}
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-900">
+                    {{ $movement->notes }}
                 </td>
             </tr>
             @endforeach

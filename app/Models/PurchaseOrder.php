@@ -3,18 +3,31 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PurchaseOrder extends Model
 {
     protected $guarded = [];
 
-    public function supplier()
+    protected $casts = [
+        'purchase_price' => 'decimal:2',
+        'purchased_at' => 'datetime',
+        'delivered_at' => 'datetime',
+    ];
+
+    /**
+     * Get the supplier who sold the vehicle.
+     */
+    public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);
     }
 
-    public function items()
+    /**
+     * Get the vehicle purchased.
+     */
+    public function vehicle(): BelongsTo
     {
-        return $this->hasMany(PurchaseOrderItem::class);
+        return $this->belongsTo(Vehicle::class);
     }
 }

@@ -2,60 +2,56 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
-use App\Models\PurchaseOrder;
+use App\Models\Vehicle;
+use App\Models\Lead;
 use App\Models\Supplier;
-use App\Models\InventoryMovement;
+use App\Models\Deal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $totalSuppliers = Supplier::count();
-        $totalProducts = Product::count();
-        $inventoryValue = Product::select(DB::raw('SUM(stock_qty * cost_price) as value'))->value('value') ?? 0;
-        $totalPOs = PurchaseOrder::count();
-        $lowStockItems = Product::whereColumn('stock_qty', '<', 'min_stock')->count();
-        $totalPayables = Supplier::sum('balance');
+        $totalVehicles = Vehicle::count();
+        $availableVehicles = Vehicle::where('status', 'available')->count();
+        $reservedVehicles = Vehicle::where('status', 'reserved')->count();
+        $soldVehicles = Vehicle::where('status', 'sold')->count();
 
-        $recentPOs = PurchaseOrder::with('supplier')->latest()->take(5)->get();
+        // Dealership inventory value
+        $inventoryValue = Vehicle::whereIn('status', ['available', 'in_transit', 'reserved'])->sum('cost_price');
 
-        // Monthly Purchases (Last 6 months)
-        $monthlyPurchases = PurchaseOrder::select(
-            DB::raw('SUM(total) as total'),
-            DB::raw("DATE_FORMAT(created_at, '%Y-%m') as month")
-        )
-        ->where('status', 'received') // Only received POs count as purchases? Or all? User said "Monthly Purchases". Usually means realized.
-        ->groupBy('month')
-        ->orderBy('month', 'asc')
-        ->take(6)
-        ->get();
+        // CRM Leads Count
+        $leadsQuery = Lead::query();
+        if (Auth::user()->hasRole('sales_agent')) {
+            $leadsQuery->where('assigned_to', Auth::id());
+        }
+        $totalLeads = (clone $leadsQuery)->count();
+        $activeLeads = (clone $leadsQuery)->whereIn('status', ['new', 'contacted', 'qualified'])->count();
 
-        // Inventory Movements (Last 30 days)
-        $movementHistory = InventoryMovement::select(
-            DB::raw('COUNT(*) as count'),
-            DB::raw("DATE(created_at) as date")
-        )
-        ->where('created_at', '>=', now()->subDays(30))
-        ->groupBy('date')
-        ->orderBy('date', 'asc')
-        ->get();
+        // Follow-up reminders: overdue follow-ups where follow_up_at is past and status is not lost/converted
+        $overdueFollowUps = (clone $leadsQuery)
+            ->whereIn('status', ['new', 'contacted', 'qualified'])
+            ->whereNotNull('follow_up_at')
+            ->where('follow_up_at', '<', now())
+            ->with(['customer', 'vehicle'])
+            ->orderBy('follow_up_at', 'asc')
+            ->get();
 
-        $lowStockProducts = Product::whereColumn('stock_qty', '<', 'min_stock')->get();
+        // Recent Deals
+        $recentDeals = Deal::with(['customer', 'vehicle'])->latest()->take(5)->get();
 
         return view('dashboard', compact(
-            'totalSuppliers',
-            'totalProducts',
+            'totalVehicles',
+            'availableVehicles',
+            'reservedVehicles',
+            'soldVehicles',
             'inventoryValue',
-            'totalPOs',
-            'lowStockItems',
-            'totalPayables',
-            'recentPOs',
-            'monthlyPurchases',
-            'movementHistory',
-            'lowStockProducts'
+            'totalLeads',
+            'activeLeads',
+            'overdueFollowUps',
+            'recentDeals'
         ));
     }
 }

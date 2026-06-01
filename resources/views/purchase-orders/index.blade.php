@@ -33,43 +33,55 @@
             <tr>
                 <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">رقم الأمر</th>
                 <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">المورد</th>
+                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">السيارة المشتراة</th>
                 <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">التاريخ</th>
-                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">الإجمالي</th>
+                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">قيمة الشراء</th>
                 <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">الحالة</th>
                 <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">الإجراءات</th>
             </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-            @foreach($purchaseOrders as $po)
+            @forelse($purchaseOrders as $po)
             <tr class="hover:bg-gray-50 transition-colors duration-200 {{ $loop->even ? 'bg-gray-50/50' : '' }}">
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
-                    {{ $po->po_number }}
+                    PO-{{ str_pad($po->id, 5, '0', STR_PAD_LEFT) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {{ $po->supplier->name }}
+                    {{ $po->supplier ? $po->supplier->name : '-' }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold">
+                    @if($po->vehicle)
+                        {{ $po->vehicle->make }} {{ $po->vehicle->model }} ({{ $po->vehicle->year }})
+                    @else
+                        -
+                    @endif
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {{ $po->created_at->format('Y-m-d') }}
+                    {{ $po->purchased_at ? $po->purchased_at->format('Y-m-d') : ($po->created_at ? $po->created_at->format('Y-m-d') : '-') }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
-                    {{ number_format($po->total, 2) }} ر.س
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-indigo-700">
+                    {{ number_format($po->purchase_price, 2) }} ر.س
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                    @if($po->status === 'draft')
-                        <span class="px-2 inline-flex text-xs leading-5 font-bold rounded-full bg-gray-100 text-gray-800">مسودة</span>
-                    @elseif($po->status === 'approved')
-                        <span class="px-2 inline-flex text-xs leading-5 font-bold rounded-full bg-blue-100 text-blue-800">معتمد</span>
-                    @elseif($po->status === 'received')
+                    @if($po->delivered_at)
                         <span class="px-2 inline-flex text-xs leading-5 font-bold rounded-full bg-green-100 text-green-800">مستلم</span>
+                    @else
+                        <span class="px-2 inline-flex text-xs leading-5 font-bold rounded-full bg-yellow-100 text-yellow-800">في الشحن</span>
                     @endif
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <a href="{{ route('purchase-orders.show', $po) }}" class="text-indigo-600 hover:text-indigo-900">
-                        <i class="fas fa-eye ml-1"></i> عرض
+                        <i class="fas fa-eye ml-1"></i> عرض وتأكيد الاستلام
                     </a>
                 </td>
             </tr>
-            @endforeach
+            @empty
+            <tr>
+                <td colspan="7" class="px-6 py-8 text-center text-gray-400">
+                    لا توجد أوامر شراء حالياً
+                </td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
     <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">

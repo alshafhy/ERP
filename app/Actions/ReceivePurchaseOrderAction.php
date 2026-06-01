@@ -3,41 +3,39 @@
 namespace App\Actions;
 
 use App\Models\PurchaseOrder;
-use App\Models\InventoryMovement;
 use App\Models\JournalEntry;
+use App\Models\VehicleStatusLog;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class ReceivePurchaseOrderAction
 {
     public function execute(PurchaseOrder $purchaseOrder)
     {
         return DB::transaction(function () use ($purchaseOrder) {
-            if ($purchaseOrder->status !== 'approved') {
-                throw new \Exception('Only approved purchase orders can be received.');
+            if ($purchaseOrder->delivered_at !== null) {
+                throw new \Exception('أمر الشراء هذا مستلم بالفعل.');
             }
 
-            // 1. Set PO status = received, received_at = now()
+            // 1. Mark as delivered
             $purchaseOrder->update([
-                'status' => 'received',
-                'received_at' => now(),
+                'delivered_at' => now(),
             ]);
 
-            // 2. Process each product
-            foreach ($purchaseOrder->items as $item) {
-                $product = $item->product;
-                
-                // Increment stock_qty on each product
-                $product->increment('stock_qty', $item->qty);
+            // 2. Update vehicle status to available
+            $vehicle = $purchaseOrder->vehicle;
+            if ($vehicle) {
+                $oldStatus = $vehicle->status;
+                $vehicle->update(['status' => 'available']);
 
-                // Create InventoryMovement records (type=in)
-                InventoryMovement::create([
-                    'product_id' => $product->id,
-                    'type' => 'in',
-                    'reference_type' => 'purchase_order',
-                    'reference_id' => $purchaseOrder->id,
-                    'qty' => $item->qty,
-                    'balance_after' => $product->stock_qty,
+                // Create status log
+                VehicleStatusLog::create([
+                    'vehicle_id' => $vehicle->id,
+                    'status_from' => $oldStatus,
+                    'status_to' => 'available',
+                    'changed_by' => Auth::id() ?? 1,
+                    'notes' => 'تم استلام السيارة وتحديث حالتها إلى متاحة بموجب أمر الشراء رقم #' . $purchaseOrder->id,
+                    'changed_at' => now(),
                 ]);
             }
 
@@ -46,14 +44,16 @@ class ReceivePurchaseOrderAction
                 'entry_number' => 'JE-' . date('Ymd') . '-' . str_pad(JournalEntry::count() + 1, 4, '0', STR_PAD_LEFT),
                 'reference_type' => 'purchase_order',
                 'reference_id' => $purchaseOrder->id,
-                'description' => "استلام أمر شراء رقم {$purchaseOrder->po_number}",
+                'description' => "استلام أمر شراء سيارة رقم #{$purchaseOrder->id}",
                 'debit_account' => 'المخزون',
                 'credit_account' => 'الذمم الدائنة',
-                'amount' => $purchaseOrder->total,
+                'amount' => $purchaseOrder->purchase_price,
             ]);
 
             // 4. Increment supplier balance
-            $purchaseOrder->supplier->increment('balance', $purchaseOrder->total);
+            if ($purchaseOrder->supplier) {
+                $purchaseOrder->supplier->increment('balance', $purchaseOrder->purchase_price);
+            }
 
             return $purchaseOrder;
         });

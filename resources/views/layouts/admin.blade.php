@@ -34,9 +34,41 @@
                     <span class="mx-3">الموردون</span>
                 </a>
 
-                <a class="flex items-center px-6 py-2 mt-4 text-gray-100 hover:bg-indigo-800 {{ request()->is('products*') ? 'bg-indigo-800' : '' }}" href="{{ route('products.index') }}">
-                    <i class="fas fa-boxes w-6"></i>
-                    <span class="mx-3">المنتجات</span>
+                <a class="flex items-center px-6 py-2 mt-4 text-gray-100 hover:bg-indigo-800 {{ request()->is('vehicles*') ? 'bg-indigo-800' : '' }}" href="{{ route('vehicles.index') }}">
+                    <i class="fas fa-car w-6"></i>
+                    <span class="mx-3">مخزون السيارات</span>
+                </a>
+
+                <a class="flex items-center px-6 py-2 mt-4 text-gray-100 hover:bg-indigo-800 {{ request()->is('customers*') ? 'bg-indigo-800' : '' }}" href="{{ route('customers.index') }}">
+                    <i class="fas fa-users w-6"></i>
+                    <span class="mx-3">العملاء</span>
+                </a>
+
+                <a class="flex items-center px-6 py-2 mt-4 text-gray-100 hover:bg-indigo-800 {{ request()->is('leads*') ? 'bg-indigo-800' : '' }}" href="{{ route('leads.index') }}">
+                    <i class="fas fa-filter w-6"></i>
+                    <span class="mx-3">الفرص البيعية (CRM)</span>
+                </a>
+
+                <a class="flex items-center px-6 py-2 mt-4 text-gray-100 hover:bg-indigo-800 {{ request()->is('deals*') ? 'bg-indigo-800' : '' }}" href="{{ route('deals.index') }}">
+                    <i class="fas fa-handshake w-6"></i>
+                    <span class="mx-3">عقود المبيعات والصفقات</span>
+                </a>
+
+                <a class="flex items-center px-6 py-2 mt-4 text-gray-100 hover:bg-indigo-800 {{ request()->is('finance*') ? 'bg-indigo-800' : '' }}" href="{{ route('finance.index') }}">
+                    <i class="fas fa-wallet w-6"></i>
+                    <span class="mx-3">المالية والحسابات</span>
+                </a>
+
+                @if(auth()->user()->hasAnyRole(['super_admin', 'branch_manager']))
+                    <a class="flex items-center px-6 py-2 mt-4 text-gray-100 hover:bg-indigo-800 {{ request()->is('users*') ? 'bg-indigo-800' : '' }}" href="{{ route('users.index') }}">
+                        <i class="fas fa-users-cog w-6"></i>
+                        <span class="mx-3">الموظفون والصلاحيات</span>
+                    </a>
+                @endif
+
+                <a class="flex items-center px-6 py-2 mt-4 text-gray-100 hover:bg-indigo-800 {{ request()->is('reports*') ? 'bg-indigo-800' : '' }}" href="{{ route('reports.index') }}">
+                    <i class="fas fa-chart-bar w-6"></i>
+                    <span class="mx-3">التقارير والتحليلات</span>
                 </a>
 
                 <a class="flex items-center px-6 py-2 mt-4 text-gray-100 hover:bg-indigo-800 {{ request()->is('purchase-orders*') ? 'bg-indigo-800' : '' }}" href="{{ route('purchase-orders.index') }}">

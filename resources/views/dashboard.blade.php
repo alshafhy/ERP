@@ -3,236 +3,196 @@
 @section('title', 'لوحة التحكم')
 
 @section('content')
-<div class="mb-8">
-    <h3 class="text-3xl font-bold text-gray-700 text-right">لوحة التحكم التنفيذية</h3>
-</div>
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="mb-6">
+        <h1 class="text-3xl font-black text-gray-800 text-right">لوحة التحكم التنفيذية - معرض السيارات</h1>
+        <p class="text-xs text-gray-500 text-right mt-1">إحصائيات المبيعات، حالة المخزون، ونظام التنبيهات لمتابعة العملاء</p>
+    </div>
 
-<!-- KPI Cards - Row 1 -->
-<div class="grid grid-cols-1 gap-6 mb-6 lg:grid-cols-3">
-    <!-- Total Suppliers -->
-    <div class="flex items-center px-5 py-6 bg-white rounded-md shadow-sm border-r-4 border-blue-500 text-right">
-        <div class="p-3 bg-blue-600 bg-opacity-10 rounded-full">
-            <i class="fas fa-truck text-blue-600 text-2xl"></i>
+    <!-- KPI Row 1: Vehicles Stock -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <!-- Total Vehicles -->
+        <div class="flex items-center px-5 py-6 bg-white rounded-2xl shadow-sm border border-gray-100 text-right">
+            <div class="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
+                <i class="fas fa-car text-2xl"></i>
+            </div>
+            <div class="mx-5">
+                <h4 class="text-2xl font-black text-gray-800">{{ number_format($totalVehicles) }}</h4>
+                <div class="text-gray-400 text-xs mt-0.5">إجمالي السيارات</div>
+            </div>
         </div>
-        <div class="mx-5">
-            <h4 class="text-2xl font-bold text-gray-700">{{ number_format($totalSuppliers) }}</h4>
-            <div class="text-gray-500 font-medium">الموردون</div>
+
+        <!-- Available Vehicles -->
+        <div class="flex items-center px-5 py-6 bg-white rounded-2xl shadow-sm border border-gray-100 text-right">
+            <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
+                <i class="fas fa-check-circle text-2xl"></i>
+            </div>
+            <div class="mx-5">
+                <h4 class="text-2xl font-black text-gray-800">{{ number_format($availableVehicles) }}</h4>
+                <div class="text-gray-400 text-xs mt-0.5">سيارات متاحة للبيع</div>
+            </div>
+        </div>
+
+        <!-- Reserved Vehicles -->
+        <div class="flex items-center px-5 py-6 bg-white rounded-2xl shadow-sm border border-gray-100 text-right">
+            <div class="p-3 bg-amber-50 text-amber-600 rounded-xl">
+                <i class="fas fa-hourglass-half text-2xl"></i>
+            </div>
+            <div class="mx-5">
+                <h4 class="text-2xl font-black text-gray-800">{{ number_format($reservedVehicles) }}</h4>
+                <div class="text-gray-400 text-xs mt-0.5">سيارات محجوزة</div>
+            </div>
+        </div>
+
+        <!-- Sold Vehicles -->
+        <div class="flex items-center px-5 py-6 bg-white rounded-2xl shadow-sm border border-gray-100 text-right">
+            <div class="p-3 bg-gray-50 text-gray-500 rounded-xl">
+                <i class="fas fa-handshake text-2xl"></i>
+            </div>
+            <div class="mx-5">
+                <h4 class="text-2xl font-black text-gray-800">{{ number_format($soldVehicles) }}</h4>
+                <div class="text-gray-400 text-xs mt-0.5">سيارات مباعة</div>
+            </div>
         </div>
     </div>
 
-    <!-- Total Products -->
-    <div class="flex items-center px-5 py-6 bg-white rounded-md shadow-sm border-r-4 border-green-500 text-right">
-        <div class="p-3 bg-green-600 bg-opacity-10 rounded-full">
-            <i class="fas fa-boxes text-green-600 text-2xl"></i>
+    <!-- KPI Row 2: Financials & CRM -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Inventory financial value -->
+        <div class="flex items-center px-5 py-6 bg-white rounded-2xl shadow-sm border border-gray-100 text-right">
+            <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
+                <i class="fas fa-coins text-2xl"></i>
+            </div>
+            <div class="mx-5">
+                <h4 class="text-xl font-black text-gray-800">{{ number_format($inventoryValue, 2) }} <span class="text-xs font-normal">ريال</span></h4>
+                <div class="text-gray-400 text-xs mt-0.5">القيمة المالية للمخزون الحالي</div>
+            </div>
         </div>
-        <div class="mx-5">
-            <h4 class="text-2xl font-bold text-gray-700">{{ number_format($totalProducts) }}</h4>
-            <div class="text-gray-500 font-medium">المنتجات</div>
+
+        <!-- Total CRM opportunities -->
+        <div class="flex items-center px-5 py-6 bg-white rounded-2xl shadow-sm border border-gray-100 text-right">
+            <div class="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
+                <i class="fas fa-filter text-2xl"></i>
+            </div>
+            <div class="mx-5">
+                <h4 class="text-2xl font-black text-gray-800">{{ number_format($totalLeads) }}</h4>
+                <div class="text-gray-400 text-xs mt-0.5">إجمالي الفرص المكتشفة</div>
+            </div>
+        </div>
+
+        <!-- Active Opportunities -->
+        <div class="flex items-center px-5 py-6 bg-white rounded-2xl shadow-sm border border-gray-100 text-right">
+            <div class="p-3 bg-sky-50 text-sky-600 rounded-xl">
+                <i class="fas fa-funnel-dollar text-2xl"></i>
+            </div>
+            <div class="mx-5">
+                <h4 class="text-2xl font-black text-gray-800">{{ number_format($activeLeads) }}</h4>
+                <div class="text-gray-400 text-xs mt-0.5">الفرص النشطة والمفتوحة</div>
+            </div>
         </div>
     </div>
 
-    <!-- Total Purchase Orders -->
-    <div class="flex items-center px-5 py-6 bg-white rounded-md shadow-sm border-r-4 border-purple-500 text-right">
-        <div class="p-3 bg-purple-600 bg-opacity-10 rounded-full">
-            <i class="fas fa-file-invoice-dollar text-purple-600 text-2xl"></i>
-        </div>
-        <div class="mx-5">
-            <h4 class="text-2xl font-bold text-gray-700">{{ number_format($totalPOs) }}</h4>
-            <div class="text-gray-500 font-medium">إجمالي أوامر الشراء</div>
-        </div>
-    </div>
-</div>
-
-<!-- KPI Cards - Row 2 -->
-<div class="grid grid-cols-1 gap-6 mb-8 lg:grid-cols-3">
-    <!-- Inventory Value -->
-    <div class="flex items-center px-5 py-6 bg-white rounded-md shadow-sm border-r-4 border-orange-500 text-right">
-        <div class="p-3 bg-orange-600 bg-opacity-10 rounded-full">
-            <i class="fas fa-coins text-orange-600 text-2xl"></i>
-        </div>
-        <div class="mx-5">
-            <h4 class="text-2xl font-bold text-gray-700">{{ number_format($inventoryValue, 2) }} ر.س</h4>
-            <div class="text-gray-500 font-medium">قيمة المخزون</div>
-        </div>
-    </div>
-
-    <!-- Supplier Payables -->
-    <div class="flex items-center px-5 py-6 bg-white rounded-md shadow-sm border-r-4 border-indigo-500 text-right">
-        <div class="p-3 bg-indigo-600 bg-opacity-10 rounded-full">
-            <i class="fas fa-money-bill-wave text-indigo-600 text-2xl"></i>
-        </div>
-        <div class="mx-5">
-            <h4 class="text-2xl font-bold text-gray-700">{{ number_format($totalPayables, 2) }} ر.س</h4>
-            <div class="text-gray-500 font-medium">إجمالي المستحقات للموردين</div>
-        </div>
-    </div>
-
-    <!-- Low Stock Count -->
-    <div class="flex items-center px-5 py-6 bg-white rounded-md shadow-sm border-r-4 border-red-500 text-right">
-        <div class="p-3 bg-red-600 bg-opacity-10 rounded-full">
-            <i class="fas fa-exclamation-circle text-red-600 text-2xl"></i>
-        </div>
-        <div class="mx-5">
-            <h4 class="text-2xl font-bold text-gray-700">{{ number_format($lowStockItems) }}</h4>
-            <div class="text-red-600 font-bold">أصناف منخفضة المخزون</div>
-        </div>
-    </div>
-</div>
-
-<!-- Charts Row -->
-<div class="grid grid-cols-1 gap-6 mb-8 lg:grid-cols-2">
-    <!-- Monthly Purchases Chart -->
-    <div class="p-6 bg-white rounded-md shadow-sm border-t-4 border-indigo-600 text-right">
-        <h4 class="text-lg font-bold text-gray-700 mb-4">المشتريات الشهرية (آخر 6 أشهر)</h4>
-        <div style="height: 300px; position: relative;">
-            <canvas id="purchasesChart" height="300"></canvas>
-        </div>
-    </div>
-
-    <!-- Inventory Movements Chart -->
-    <div class="p-6 bg-white rounded-md shadow-sm border-t-4 border-blue-600 text-right">
-        <h4 class="text-lg font-bold text-gray-700 mb-4">حركات المخزون اليومية (آخر 30 يوم)</h4>
-        <div style="height: 300px; position: relative;">
-            <canvas id="movementsChart" height="300"></canvas>
-        </div>
-    </div>
-</div>
-
-<div class="grid grid-cols-1 gap-6 mb-8 lg:grid-cols-3">
-    <!-- Recent POs Table (2/3 width) -->
-    <div class="lg:col-span-2 bg-white rounded-md shadow-sm overflow-hidden border-t-4 border-gray-600 text-right">
-        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-            <h4 class="text-lg font-bold text-gray-700">أحدث أوامر الشراء</h4>
-            <a href="{{ route('purchase-orders.index') }}" class="text-sm text-indigo-600 hover:underline">عرض الكل</a>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-right border-collapse">
-                <thead>
-                    <tr class="bg-gray-50">
-                        <th class="px-6 py-3 text-xs font-bold text-gray-500 uppercase">رقم الأمر</th>
-                        <th class="px-6 py-3 text-xs font-bold text-gray-500 uppercase">المورد</th>
-                        <th class="px-6 py-3 text-xs font-bold text-gray-500 uppercase">الحالة</th>
-                        <th class="px-6 py-3 text-xs font-bold text-gray-500 uppercase">الإجمالي</th>
-                        <th class="px-6 py-3 text-xs font-bold text-gray-500 uppercase">التاريخ</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($recentPOs as $po)
-                    <tr class="border-b border-gray-100 hover:bg-gray-50">
-                        <td class="px-6 py-4 text-sm text-gray-700 font-bold">{{ $po->po_number }}</td>
-                        <td class="px-6 py-4 text-sm text-gray-600">{{ $po->supplier->name }}</td>
-                        <td class="px-6 py-4 text-sm">
-                            <span class="px-2 py-1 text-xs font-bold rounded-full 
-                                {{ $po->status === 'received' ? 'bg-green-100 text-green-800' : ($po->status === 'approved' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800') }}">
-                                @if($po->status === 'received') مستلم @elseif($po->status === 'approved') معتمد @else مسودة @endif
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-700 font-bold">{{ number_format($po->total, 2) }} ر.س</td>
-                        <td class="px-6 py-4 text-sm text-gray-500">{{ $po->created_at->format('Y-m-d') }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Low Stock Alert Section (1/3 width) -->
-    <div class="bg-white rounded-md shadow-sm overflow-hidden border-t-4 border-red-600 text-right">
-        <div class="px-6 py-4 border-b border-gray-200 bg-red-50">
-            <h4 class="text-lg font-bold text-red-700">تنبيهات نقص المخزون</h4>
-        </div>
-        <div class="p-6">
-            @if($lowStockProducts->count() > 0)
-                <div class="space-y-4">
-                    @foreach($lowStockProducts as $product)
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-200">
-                            <div>
-                                <div class="text-sm font-bold text-gray-800">{{ $product->name }}</div>
-                                <div class="text-xs text-gray-500">رمز: {{ $product->sku }}</div>
+    <!-- Overdue Follow-up Reminder System (Follow-up Reminder panel) -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Reminder Panel (Flashing/Notice for agents) -->
+        <div class="lg:col-span-1 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col justify-between">
+            <div class="p-6 pb-4 border-b border-gray-100 bg-red-50/50">
+                <div class="flex items-center gap-2">
+                    <span class="animate-ping inline-flex h-2.5 w-2.5 rounded-full bg-red-400 opacity-75"></span>
+                    <h3 class="text-sm font-bold text-red-800"><i class="fas fa-bell ml-1"></i>تنبيهات المتابعة المتأخرة</h3>
+                </div>
+                <p class="text-[10px] text-red-600 mt-1">فرص بيعية تجاوزت موعد المتابعة المتفق عليه دون إغلاق</p>
+            </div>
+            
+            <div class="p-6 flex-1 overflow-y-auto max-h-[400px] space-y-4">
+                @if($overdueFollowUps->isEmpty())
+                    <div class="text-center py-12 text-gray-400 text-xs">
+                        <i class="fas fa-calendar-check text-green-500 text-3xl mb-2 block"></i>
+                        جميع مواعيد المتابعة محدثة ومستقرة!
+                    </div>
+                @else
+                    @foreach($overdueFollowUps as $lead)
+                        <div class="p-4 bg-red-50/40 border border-red-100 rounded-xl space-y-2.5">
+                            <div class="flex justify-between items-start">
+                                <a href="{{ route('leads.show', $lead) }}" class="text-xs font-black text-red-900 hover:underline">
+                                    {{ $lead->customer->name }}
+                                </a>
+                                <span class="text-[9px] font-bold text-red-700 bg-red-100 px-1.5 py-0.5 rounded-md">
+                                    منذ {{ $lead->follow_up_at->diffForHumans() }}
+                                </span>
                             </div>
-                            <div class="text-left">
-                                <div class="text-sm font-bold text-red-600">{{ $product->stock_qty }} <span class="text-xs font-normal text-gray-400">/ {{ $product->min_stock }}</span></div>
-                                <div class="text-xs text-gray-400 uppercase">{{ $product->unit }}</div>
-                            </div>
+                            @if($lead->vehicle)
+                                <div class="text-[9px] font-bold text-gray-500 bg-white px-2 py-0.5 rounded-md border border-gray-100 inline-block">
+                                    سيارة: {{ $lead->vehicle->make }} {{ $lead->vehicle->model }}
+                                </div>
+                            @endif
+                            <p class="text-[10px] text-gray-600 line-clamp-2 leading-relaxed">{{ $lead->notes }}</p>
+                            <a href="{{ route('leads.show', $lead) }}" class="inline-flex items-center text-[10px] font-bold text-red-700 hover:underline">
+                                إدارة المتابعة وإجراء الاتصال <i class="fas fa-angle-left mr-1"></i>
+                            </a>
                         </div>
                     @endforeach
+                @endif
+            </div>
+        </div>
+
+        <!-- Recent Deals table (2/3 width) -->
+        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden text-right">
+            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                <h3 class="text-sm font-bold text-gray-700"><i class="fas fa-handshake ml-2 text-indigo-500"></i>أحدث الصفقات المسجلة</h3>
+                <span class="text-xs text-gray-400">آخر صفقات مغلقة</span>
+            </div>
+            
+            @if($recentDeals->isEmpty())
+                <div class="text-center py-16 text-gray-400 text-xs">
+                    لم تسجل أية صفقات شراء كاملة حتى الآن.
                 </div>
             @else
-                <div class="text-center py-8 text-gray-500 italic">
-                    <i class="fas fa-check-circle text-green-500 text-3xl mb-2"></i>
-                    <p>جميع مستويات المخزون جيدة.</p>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right border-collapse text-sm">
+                        <thead class="bg-gray-50 text-xs font-bold text-gray-555">
+                            <tr>
+                                <th class="px-6 py-3">العميل</th>
+                                <th class="px-6 py-3">السيارة</th>
+                                <th class="px-6 py-3">نوع الدفع</th>
+                                <th class="px-6 py-3">سعر الاتفاق</th>
+                                <th class="px-6 py-3">الحالة المالية</th>
+                                <th class="px-6 py-3">التاريخ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($recentDeals as $deal)
+                                <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition">
+                                    <td class="px-6 py-4 font-bold text-gray-800">
+                                        {{ $deal->customer->name ?? 'N/A' }}
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-700">
+                                        {{ $deal->vehicle->make ?? 'N/A' }} {{ $deal->vehicle->model ?? 'N/A' }}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-indigo-50 text-indigo-700 uppercase">
+                                            {{ $deal->deal_type }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 font-bold text-gray-800 font-mono">
+                                        {{ number_format($deal->agreed_price, 2) }} ر.س
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">
+                                            {{ $deal->status }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-xs text-gray-400 font-mono">
+                                        {{ $deal->created_at->format('Y-m-d') }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             @endif
         </div>
     </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Monthly Purchases Chart
-        const purchasesCtx = document.getElementById('purchasesChart').getContext('2d');
-        new Chart(purchasesCtx, {
-            type: 'bar',
-            data: {
-                labels: {!! json_encode($monthlyPurchases->pluck('month')) !!},
-                datasets: [{
-                    label: 'المشتريات (ر.س)',
-                    data: {!! json_encode($monthlyPurchases->pluck('total')) !!},
-                    backgroundColor: 'rgba(79, 70, 229, 0.7)',
-                    borderColor: 'rgb(79, 70, 229)',
-                    borderWidth: 1,
-                    borderRadius: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: { beginAtZero: true }
-                },
-                plugins: {
-                    legend: {
-                        rtl: true,
-                        labels: { font: { family: 'Cairo' } }
-                    }
-                }
-            }
-        });
-
-        // Inventory Movements Chart
-        const movementsCtx = document.getElementById('movementsChart').getContext('2d');
-        new Chart(movementsCtx, {
-            type: 'line',
-            data: {
-                labels: {!! json_encode($movementHistory->pluck('date')) !!},
-                datasets: [{
-                    label: 'الحركات',
-                    data: {!! json_encode($movementHistory->pluck('count')) !!},
-                    fill: true,
-                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                    borderColor: 'rgb(59, 130, 246)',
-                    tension: 0.3,
-                    pointRadius: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: { 
-                        beginAtZero: true,
-                        ticks: { stepSize: 1 }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        rtl: true,
-                        labels: { font: { family: 'Cairo' } }
-                    }
-                }
-            }
-        });
-    });
-</script>
 @endsection

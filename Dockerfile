@@ -25,7 +25,7 @@ RUN apt-get install -y jpegoptim optipng pngquant gifsicle libzip-dev libonig-de
 
 RUN docker-php-ext-install bcmath && docker-php-ext-enable bcmath
 
-RUN docker-php-ext-install sockets
+RUN docker-php-ext-install sockets exif
 
 # Install PHP SQL Server connection
 RUN apt-get install -y freetds-dev \

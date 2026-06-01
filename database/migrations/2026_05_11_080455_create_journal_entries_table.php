@@ -13,14 +13,16 @@ return new class extends Migration
     {
         Schema::create('journal_entries', function (Blueprint $table) {
             $table->id();
-            $table->string('entry_number')->unique();
-            $table->string('reference_type')->nullable();
-            $table->unsignedBigInteger('reference_id')->nullable();
-            $table->text('description')->nullable();
-            $table->string('debit_account');
-            $table->string('credit_account');
-            $table->decimal('amount', 15, 2);
+            $table->string('reference')->nullable(); // e.g., Deal ID, Purchase Order ID, payment ref
+            $table->string('description');
+            $table->decimal('debit_amount', 15, 2)->default(0);
+            $table->decimal('credit_amount', 15, 2)->default(0);
+            $table->timestamp('entry_date');
             $table->timestamps();
+
+            // Indexes for accounting statements
+            $table->index('entry_date');
+            $table->index('reference');
         });
     }
 

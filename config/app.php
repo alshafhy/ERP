@@ -11,6 +11,7 @@ return [
     'cipher' => 'AES-256-CBC',
     'providers' => [
         Illuminate\Auth\AuthServiceProvider::class,
+        Illuminate\Bus\BusServiceProvider::class,
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
         Illuminate\Cache\CacheServiceProvider::class,
         Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,

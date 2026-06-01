@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
+use App\Models\Traits\BelongsToBranch;
 
 class User extends Authenticatable
 {
-    use HasRoles;
+    use HasRoles, BelongsToBranch;
 
     protected $fillable = [
         'name',
@@ -16,6 +17,7 @@ class User extends Authenticatable
         'position',
         'phone',
         'avatar',
+        'branch_id',
     ];
 
     protected $hidden = [
@@ -29,5 +31,21 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get the leads assigned to this sales agent.
+     */
+    public function leads()
+    {
+        return $this->hasMany(Lead::class, 'assigned_to');
+    }
+
+    /**
+     * Get the deals managed by this sales agent.
+     */
+    public function deals()
+    {
+        return $this->hasMany(Deal::class, 'salesperson_id');
     }
 }

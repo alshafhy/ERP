@@ -10,20 +10,24 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
-            'name' => 'محمود اسعد سعد سعيد',
-            'email' => 'admin@gmail.com',
-            'password' => Hash::make('Admin@123'),
-            'position' => 'إداري سيادي',
-            'phone' => '0500000000',
-        ]);
+        // Seed core administrative user
+        User::firstOrCreate(
+            ['email' => 'admin@gmail.com'],
+            [
+                'name' => 'محمود اسعد سعد سعيد',
+                'password' => Hash::make('Admin@123'),
+                'position' => 'إداري سيادي',
+                'phone' => '0500000000',
+            ]
+        );
 
         $this->call([
             PermissionSeeder::class,
             SupplierSeeder::class,
-            ProductSeeder::class,
-            PurchaseOrderSeeder::class,
-            JournalEntrySeeder::class,
+            VehicleSeeder::class,
+            CustomerSeeder::class,
+            LeadSeeder::class,
+            DealSeeder::class,
         ]);
     }
 }
